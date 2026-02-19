@@ -212,7 +212,7 @@ services:
       - checkmk-agents:/opt/openitc/check_mk/agents:ro
       - checkmk-etc:/opt/openitc/check_mk/etc/check_mk
       - checkmk-var:/opt/openitc/check_mk/var/check_mk
-      - prometheus-config:/opt/openitc/prometheus:ro                          # Configuration files related to Prometheus
+      - prometheus-config:/opt/openitc/prometheus                             # Configuration files related to Prometheus
     depends_on:
       - redis
       - mysql
@@ -262,6 +262,7 @@ services:
     ports:
       - "9001"       # Supervisor
       - "9099"       # Binaryd
+      - "9090"       # Prometheus
     networks:
       - oitc-backend
     depends_on:
