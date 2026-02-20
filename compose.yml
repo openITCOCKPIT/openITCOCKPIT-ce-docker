@@ -212,6 +212,7 @@ services:
       - checkmk-agents:/opt/openitc/check_mk/agents:ro
       - checkmk-etc:/opt/openitc/check_mk/etc/check_mk
       - checkmk-var:/opt/openitc/check_mk/var/check_mk
+      - prometheus-config:/opt/openitc/prometheus                             # Configuration files related to Prometheus
     depends_on:
       - redis
       - mysql
@@ -249,6 +250,27 @@ services:
       - checkmk-agents:/opt/omd/sites/nagios/version/share/check_mk/agents
       - checkmk-etc:/omd/sites/nagios/etc/check_mk
       - checkmk-var:/omd/sites/nagios/var/check_mk
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  prometheus:
+    image: openitcockpit/prometheus:latest
+    init: true
+    env_file:
+     - openitcockpit.env
+    ports:
+      - "9001"       # Supervisor
+      - "9099"       # Binaryd
+      - "9090"       # Prometheus
+    networks:
+      - oitc-backend
+    depends_on:
+      - victoria-metrics
+      - openitcockpit
+    volumes:
+      - prometheus-var:/opt/openitc/var
+      - prometheus-config:/opt/openitc/prometheus:ro
     deploy:
       restart_policy:
         condition: on-failure
@@ -297,4 +319,5 @@ volumes:
   checkmk-etc:
   checkmk-var:
   checkmk-agents:
-
+  prometheus-var:
+  prometheus-config:
